@@ -20,7 +20,10 @@ module.exports = (webpackConfig, options = {}) => {
   // show anlysis report
   if (options.analyze) {
     const plugins = webpackConfig.plugins || []
-    plugins.push(new BundleAnalyzerPlugin())
+    let analyzerOptions = typeof options.analyze === 'number' ? {
+      analyzerPort: options.analyze
+    } : undefined
+    plugins.push(new BundleAnalyzerPlugin(analyzerOptions))
     webpackConfig.plugins = plugins
   }
 
