@@ -1,0 +1,35 @@
+{
+  "name": "webapp-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": {
+    "webapp": "./bin/webapp.js"
+  },
+  "repository": "https://kennysng@github.com/kennysng/webapp-template.git",
+  "author": "Kennys Ng <kennysng@hotmail.com.hk>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-eslint": "^8.2.5",
+    "eslint": "^5.0.1",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-babel": "^5.1.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0"
+  },
+  "dependencies": {
+    "browserslist": "^4.0.0",
+    "chalk": "^2.4.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "debug": "^3.1.0",
+    "inquirer": "^6.0.0",
+    "lodash": "^4.17.10",
+    "minimist": "^1.2.0",
+    "pkg-up": "^2.0.0",
+    "react-dev-utils": "^5.0.1",
+    "webpack": "^4.12.2",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-dev-server": "^3.1.4"
+  }
+}
