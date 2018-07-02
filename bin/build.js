@@ -1,6 +1,6 @@
 const path = require('path')
 
-const { build, utils: { argv } } = require('../')
+const { build, utils: { argv } } = require('..')
 
 const cwd = process.cwd()
 const webpackConfig = require(path.resolve(cwd, argv._[0]))

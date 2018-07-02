@@ -5,7 +5,7 @@ const chalk = require('chalk')
 const childProcess = require('child_process')
 const path = require('path')
 
-const { utils: { argv, env } } = require('../')
+const { argv, env } = require('..').utils
 
 if (argv.env) env(argv.env)
 

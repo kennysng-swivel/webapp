@@ -1,6 +1,6 @@
 const openBrowser = require('react-dev-utils/openBrowser')
 
-const { argv, checkBrowsers } = require('./utils')
+const { argv, checkBrowsers } = require('..').utils
 
 module.exports = {
   // default set of target browsers
