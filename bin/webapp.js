@@ -3,6 +3,7 @@
 const assert = require('assert')
 const chalk = require('chalk')
 const childProcess = require('child_process')
+const path = require('path')
 
 const { utils: { argv, env } } = require('../')
 
@@ -12,18 +13,18 @@ switch (argv._[0]) {
   case 'build':
     assert(argv._[1], `please specify a webpack config file`)
     process.env.NODE_ENV = 'production'
-    childProcess.fork('./build', process.argv.slice(3))
+    childProcess.fork(path.resolve(__dirname, 'build'), process.argv.slice(3))
     break
   case 'start':
     assert(argv._[1], `please specify a webpack config file`)
-    const main = () => childProcess.fork('./start', process.argv.slice(3))
+    const main = () => childProcess.fork(path.resolve(__dirname, 'start'), process.argv.slice(3))
 
     process.env.NODE_ENV = 'development'
     let proc = main()
 
     // refresh event
     process.openStdin().addListener('data', msg => {
-      if (msg.trim() === 'rs') {
+      if (String(msg).trim() === 'rs') {
         proc.kill('SIGINT')
         proc = main()
       }

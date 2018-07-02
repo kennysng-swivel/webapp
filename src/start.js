@@ -10,8 +10,9 @@ module.exports = (webpackConfig, options = {}) => {
   // build mode
   webpackConfig.mode = options.mode || webpackConfig.mode || 'development'
 
-  const server = new WebpackDevServer(webpack(webpackConfig), webpackConfig.devServer)
-  server.listen(options.port || 3000, '0.0.0.0', (err) => {
+  const devServer = webpackConfig.devServer || {}
+  const server = new WebpackDevServer(webpack(webpackConfig), devServer)
+  server.listen(options.port || 3000, devServer.host || 'localhost', (err) => {
     if (err) throw err
     console.log(chalk.cyan('Starting the development server...\n'))
 
