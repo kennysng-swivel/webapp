@@ -8,5 +8,5 @@ module.exports = jsonPath => {
     jsonPath = path.resolve(process.cwd(), jsonPath)
     try { env = require(jsonPath) } catch (e) { debug(`WARNING path '${jsonPath}' not exist`) }
   }
-  return _.merge(process.env, env)
+  return (process.env = _.merge(process.env, env))
 }
