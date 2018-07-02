@@ -21,7 +21,7 @@ module.exports = {
   root: process.cwd(),
 
   // start event
-  onStart: options => {
+  onStart: (webpackConfig, options) => {
     if (argv.open) {
       checkBrowsers(options.defaultBrowsers)(options.root)
         .then(() => openBrowser(`http://localhost:${argv.port || 3000}`))
