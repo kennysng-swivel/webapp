@@ -12,20 +12,23 @@ module.exports = (webpackConfig, options = {}) => {
 
   const devServer = webpackConfig.devServer || {}
   const server = new WebpackDevServer(webpack(webpackConfig), devServer)
-  server.listen(options.port || 3000, devServer.host || 'localhost', (err) => {
-    if (err) throw err
-    console.log(chalk.cyan('Starting the development server...\n'))
+  Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
+    .then(() => {
+      server.listen(options.port || 3000, devServer.host || 'localhost', (err) => {
+        if (err) throw err
+        console.log(chalk.cyan('Starting the development server...\n'))
 
-    // start event
-    typeof options.onStart === 'function' && options.onStart(webpackConfig, options)
-  })
+        // start event
+        typeof options.onStart === 'function' && options.onStart(webpackConfig, options)
+      })
 
-  // stop on signal
-  const signals = ['SIGINT', 'SIGTERM']
-  signals.forEach(sig => {
-    process.on(sig, () => {
-      server.close()
-      process.exit()
+      // stop on signal
+      const signals = ['SIGINT', 'SIGTERM']
+      signals.forEach(sig => {
+        process.on(sig, () => {
+          server.close()
+          process.exit()
+        })
+      })
     })
-  })
 }

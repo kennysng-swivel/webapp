@@ -20,11 +20,17 @@ module.exports = {
   // project root
   root: process.cwd(),
 
-  // start event
-  onStart: (webpackConfig, options) => {
+  // before start event
+  beforeState: (webpackConfig, options) => {
     if (argv.open) {
-      checkBrowsers(options.defaultBrowsers)(options.root)
-        .then(() => openBrowser(`http://localhost:${argv.port || 3000}`))
+      return checkBrowsers(options.defaultBrowsers)(options.root)
+    }
+  },
+
+  // start event
+  onStart: () => {
+    if (argv.open) {
+      openBrowser(`http://localhost:${argv.port || 3000}`)
     }
   }
 }

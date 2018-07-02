@@ -33,21 +33,22 @@ module.exports = (webpackConfig, options = {}) => {
   // build event
   let timestamp = process.hrtime()
   console.log(chalk.bgGreen.black('Start building ...'))
-  typeof options.onBuild === 'function' && options.onBuild(webpackConfig, options)
+  Promise.resolve(typeof options.beforeBuild === 'function' && options.beforeBuild(webpackConfig, options))
+    .then(() => {
+      webpack(webpackConfig, (err, stats) => {
+        // runtime error
+        if (err) throw err
 
-  webpack(webpackConfig, (err, stats) => {
-    // runtime error
-    if (err) throw err
+        // build error
+        if (stats.hasErrors()) {
+          return console.error(stats.toString({ colors: true }))
+        }
 
-    // build error
-    if (stats.hasErrors()) {
-      return console.error(stats.toString({ colors: true }))
-    }
-
-    // built event
-    timestamp = process.hrtime(timestamp)
-    timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
-    console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
-    typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
-  })
+        // built event
+        timestamp = process.hrtime(timestamp)
+        timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
+        console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
+        typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
+      })
+    })
 }
