@@ -2,33 +2,37 @@
 
 const assert = require('assert')
 const chalk = require('chalk')
+const childProcess = require('child_process')
 
-const { build, start, utils: { argv } } = require('../')
+const { utils: { argv } } = require('../')
 
 switch (argv._[0]) {
   case 'build':
-    let webpackConfig
     assert(argv._[1], `please specify a webpack config file`)
-    try {
-      webpackConfig = require(argv._[1])
-    } catch (e) {
-      return chalk.error(`webpack config file '${argv._[1]}' is not found`)
-    }
-    argv._ = argv._.slice(2)
-    let options = argv.config ? require(argv.config) : {}
-    let defOptions = require('./build.config.js')
-    return build(webpackConfig, Object.assign(defOptions, options))
+    childProcess.fork('./build', process.argv.slice(3))
+    break
   case 'start':
     assert(argv._[1], `please specify a webpack config file`)
-    try {
-      webpackConfig = require(argv._[1])
-    } catch (e) {
-      return chalk.error(`webpack config file '${argv._[1]}' is not found`)
-    }
-    argv._ = argv._.slice(2)
-    options = argv.config ? require(argv.config) : {}
-    defOptions = require('./start.config.js')
-    return start(webpackConfig, Object.assign(defOptions, options))
+    const main = () => childProcess.fork('./start', process.argv.slice(3))
+    let proc = main()
+
+    // refresh event
+    process.openStdin().addListener('data', msg => {
+      if (msg.trim() === 'rs') {
+        proc.kill('SIGINT')
+        proc = main()
+      }
+    })
+
+    // stop on signal
+    const signals = ['SIGINT', 'SIGTERM']
+    signals.forEach(sig => {
+      process.on(sig, () => {
+        proc.kill(sig)
+        process.exit()
+      })
+    })
+    break
   case undefined:
     console.error(chalk.red(`please specify a command`))
     console.log(chalk.green(`usage: webapp {build|start} {webpack.config.js} [--config=webapp.config.js] [options]`))

@@ -1,4 +1,4 @@
-const { argv } = require('../src/utils')
+const { argv } = require('./utils')
 
 module.exports = {
   // whether to open the analysis report after build

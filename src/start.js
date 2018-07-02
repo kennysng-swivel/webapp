@@ -19,13 +19,6 @@ module.exports = (webpackConfig, options = {}) => {
     typeof options.onStart === 'function' && options.onStart(webpackConfig, options)
   })
 
-  // refresh event
-  process.openStdin().addListener('data', msg => {
-    if (msg.trim() === 'rs') {
-      typeof options.onRefresh === 'function' && options.onRefresh(webpackConfig, options)
-    }
-  })
-
   // stop on signal
   const signals = ['SIGINT', 'SIGTERM']
   signals.forEach(sig => {
