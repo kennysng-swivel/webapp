@@ -5,7 +5,7 @@
   "bin": {
     "webapp": "./bin/webapp.js"
   },
-  "repository": "https://kennysng@github.com/kennysng/webapp-template.git",
+  "repository": "https://kennysng@github.com/kennysng/webapp.git",
   "author": "Kennys Ng <kennysng@hotmail.com.hk>",
   "license": "Apache-2.0",
   "devDependencies": {
