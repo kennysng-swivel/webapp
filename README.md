@@ -17,6 +17,6 @@ Provide commands for developing web app with webpack
 
 | Options   | Descriptions                                              | Default      |
 | --------- | --------------------------------------------------------- | ------------ |
-| analyze   | whether to enable bundle analyzer, or the port to be used | true         |
-| clean     | whether to do a clean build                               | true         |
+| analyze   | whether to enable bundle analyzer, or the port to be used | false        |
+| clean     | whether to do a clean build                               | false        |
 | mode      | either `development` or `production`                      | `production` |
