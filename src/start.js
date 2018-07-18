@@ -1,5 +1,6 @@
 const assert = require('assert')
 const chalk = require('chalk')
+const debug = require('debug')('debug:start')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 
@@ -9,6 +10,7 @@ module.exports = (webpackConfig, options = {}) => {
 
   // build mode
   webpackConfig.mode = options.mode || webpackConfig.mode || 'development'
+  debug(`INFO build mode = ${webpackConfig.mode}`)
 
   const devServer = webpackConfig.devServer || {}
   const server = new WebpackDevServer(webpack(webpackConfig), devServer)

@@ -1,6 +1,6 @@
 # webapp
 
-Provide commands for starting dev server and building production codes with webpack
+Provide commands for developing web app with webpack
 
 ## start
 

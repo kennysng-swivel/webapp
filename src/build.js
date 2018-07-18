@@ -1,5 +1,6 @@
 const assert = require('assert')
 const chalk = require('chalk')
+const debug = require('debug')('debug:build')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const CleanPlugin = require('clean-webpack-plugin')
 const webpack = require('webpack')
@@ -10,32 +11,16 @@ module.exports = (webpackConfig, options = {}) => {
 
   const root = process.cwd()
 
-  // clean build folder
-  if (options.clean && webpackConfig.output && webpackConfig.output.path) {
-    const plugins = webpackConfig.plugins || []
-    plugins.push(new CleanPlugin([webpackConfig.output.path], { root }))
-    webpackConfig.plugins = plugins
-  }
-
-  // show anlysis report
-  if (options.analyze) {
-    const plugins = webpackConfig.plugins || []
-    let analyzerOptions = typeof options.analyze === 'number' ? {
-      analyzerPort: options.analyze
-    } : undefined
-    plugins.push(new BundleAnalyzerPlugin(analyzerOptions))
-    webpackConfig.plugins = plugins
-  }
-
   // build mode
   webpackConfig.mode = options.mode || webpackConfig.mode || 'production'
+  debug(`INFO build mode = ${webpackConfig.mode}`)
 
   // build event
   let timestamp = process.hrtime()
   console.log(chalk.bgGreen.black('Start building ...'))
   Promise.resolve(typeof options.beforeBuild === 'function' && options.beforeBuild(webpackConfig, options))
     .then(() => {
-      webpack(webpackConfig, (err, stats) => {
+      const compiler = webpack(webpackConfig, (err, stats) => {
         // runtime error
         if (err) throw err
 
@@ -50,5 +35,20 @@ module.exports = (webpackConfig, options = {}) => {
         console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
         typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
       })
+
+      // clean build folder
+      if (options.clean && webpackConfig.output && webpackConfig.output.path) {
+        new CleanPlugin([webpackConfig.output.path], { root }).apply(compiler)
+        debug('INFO clean build enabled')
+      }
+
+      // show analysis report
+      if (options.analyze) {
+        let analyzerOptions = typeof options.analyze === 'number' ? {
+          analyzerPort: options.analyze
+        } : undefined
+        new BundleAnalyzerPlugin(analyzerOptions).apply(compiler)
+        debug('INFO bundle analyzer enabled')
+      }
     })
 }
