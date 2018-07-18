@@ -1,6 +1,6 @@
 {
   "name": "webapp",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "index.js",
   "bin": {
     "webapp": "./bin/webapp.js"
@@ -9,8 +9,8 @@
   "author": "Kennys Ng <kennysng@hotmail.com.hk>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "babel-eslint": "^8.2.5",
-    "eslint": "^5.0.1",
+    "babel-eslint": "^8.2.6",
+    "eslint": "^5.1.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-babel": "^5.1.0",
     "eslint-plugin-import": "^2.13.0",
@@ -19,7 +19,7 @@
     "eslint-plugin-standard": "^3.1.0"
   },
   "dependencies": {
-    "browserslist": "^4.0.0",
+    "browserslist": "^4.0.1",
     "chalk": "^2.4.1",
     "clean-webpack-plugin": "^0.1.19",
     "debug": "^3.1.0",
@@ -27,7 +27,7 @@
     "minimist": "^1.2.0",
     "pkg-up": "^2.0.0",
     "react-dev-utils": "^5.0.1",
-    "webpack": "^4.12.2",
+    "webpack": "^4.16.1",
     "webpack-bundle-analyzer": "^2.13.1",
     "webpack-dev-server": "^3.1.4"
   }
