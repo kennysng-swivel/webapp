@@ -28,6 +28,7 @@ module.exports = (webpackConfig, options = {}) => {
         if (stats.hasErrors()) {
           return console.error(stats.toString({ colors: true }))
         }
+        console.log(stats.toString({ colors: true }))
 
         // built event
         timestamp = process.hrtime(timestamp)
