@@ -3,7 +3,7 @@
   "version": "1.0.9",
   "main": "index.js",
   "bin": {
-    "webapp": "./bin/webapp.js"
+    "webapp": "node ./bin/webapp.js"
   },
   "repository": "https://kennysng@github.com/kennysng/webapp.git",
   "author": "Kennys Ng <kennysng@hotmail.com.hk>",
