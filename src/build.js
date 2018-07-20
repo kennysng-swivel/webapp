@@ -7,34 +7,45 @@ const webpack = require('webpack')
 
 module.exports = (webpackConfig, options = {}) => {
   assert(webpackConfig, 'ERROR please provide a webpackConfig')
-  assert(typeof webpackConfig === 'object', 'ERROR webpackConfig should be an object')
+  assert(
+    Array.isArray(webpackConfig) || typeof webpackConfig === 'object',
+    'ERROR webpackConfig should be an array or object'
+  )
 
   const root = process.cwd()
 
-  // build mode
-  webpackConfig.mode = options.mode || webpackConfig.mode || 'production'
-  debug(`INFO build mode = ${webpackConfig.mode}`)
+  if (!Array.isArray(webpackConfig)) webpackConfig = [webpackConfig]
 
-  // build event
+  // build mode
+  const mode = options.mode || 'production'
+  webpackConfig.forEach(config => (config.mode = mode))
+  debug(`INFO build mode = ${mode}`)
+
+  if (webpackConfig.length === 1) webpackConfig = webpackConfig[0]
+
   let timestamp = process.hrtime()
   console.log(chalk.bgGreen.black('Start building ...'))
+
+  // beforeStart event
   Promise.resolve(typeof options.beforeBuild === 'function' && options.beforeBuild(webpackConfig, options))
     .then(() => {
+      // build with webpack
       const compiler = webpack(webpackConfig, (err, stats) => {
         // runtime error
         if (err) throw err
 
-        // build error
+        // build logs
         if (stats.hasErrors()) {
           return console.error(stats.toString({ colors: true }))
         }
         console.log(stats.toString({ colors: true }))
 
         // built event
+        typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
+
         timestamp = process.hrtime(timestamp)
         timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
         console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
-        typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
       })
 
       // clean build folder

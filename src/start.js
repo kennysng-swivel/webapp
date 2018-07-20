@@ -1,21 +1,38 @@
 const assert = require('assert')
 const chalk = require('chalk')
 const debug = require('debug')('debug:start')
+const _ = require('lodash')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
 
 module.exports = (webpackConfig, options = {}) => {
   assert(webpackConfig, 'ERROR please provide a webpackConfig')
-  assert(typeof webpackConfig === 'object', 'ERROR webpackConfig should be an object')
+  assert(
+    Array.isArray(webpackConfig) || typeof webpackConfig === 'object',
+    'ERROR webpackConfig should be an array or object'
+  )
+
+  if (!Array.isArray(webpackConfig)) webpackConfig = [webpackConfig]
 
   // build mode
-  webpackConfig.mode = options.mode || webpackConfig.mode || 'development'
-  debug(`INFO build mode = ${webpackConfig.mode}`)
+  const mode = options.mode || 'production'
+  webpackConfig.forEach(config => (config.mode = mode))
+  debug(`INFO build mode = ${mode}`)
 
-  const devServer = webpackConfig.devServer || {}
+  // devServer options
+  const devServer = webpackConfig.reduce((result, config) => {
+    return _.merge(result, config.devServer || {})
+  }, {})
+
+  if (webpackConfig.length === 1) webpackConfig = webpackConfig[0]
+
+  // create devServer
   const server = new WebpackDevServer(webpack(webpackConfig), devServer)
+
+  // beforeStart event
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
+      // start devServer
       server.listen(options.port || 3000, devServer.host || 'localhost', (err) => {
         if (err) throw err
         console.log(chalk.cyan('Starting the development server...\n'))
@@ -28,6 +45,9 @@ module.exports = (webpackConfig, options = {}) => {
       const signals = ['SIGINT', 'SIGTERM']
       signals.forEach(sig => {
         process.on(sig, () => {
+          // close event
+          typeof options.onClose === 'function' && options.onClose(webpackConfig, options)
+
           server.close()
           process.exit()
         })
