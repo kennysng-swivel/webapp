@@ -1,4 +1,4 @@
-const debug = require('debug')('debug:utils/env')
+const debug = require('debug')('webapp:utils/env')
 const _ = require('lodash')
 const path = require('path')
 

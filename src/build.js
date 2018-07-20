@@ -1,6 +1,6 @@
 const assert = require('assert')
 const chalk = require('chalk')
-const debug = require('debug')('debug:build')
+const debug = require('debug')('webapp:build')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const CleanPlugin = require('clean-webpack-plugin')
 const webpack = require('webpack')
@@ -34,11 +34,8 @@ module.exports = (webpackConfig, options = {}) => {
         // runtime error
         if (err) throw err
 
-        // build logs
-        if (stats.hasErrors()) {
-          return console.error(stats.toString({ colors: true }))
-        }
-        console.log(stats.toString({ colors: true }))
+        // show logs
+        console[stats.hasErrors() ? 'error' : 'log'](stats.toString({ colors: true }))
 
         // built event
         typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)

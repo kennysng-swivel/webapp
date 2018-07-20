@@ -20,8 +20,8 @@ module.exports = {
   // project root
   root: process.cwd(),
 
-  // before start event
-  beforeState: (webpackConfig, options) => {
+  // beforeStart event
+  beforeStart: (webpackConfig, options) => {
     if (argv.open) {
       return checkBrowsers(options.defaultBrowsers)(options.root)
     }

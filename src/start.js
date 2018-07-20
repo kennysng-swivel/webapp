@@ -1,6 +1,6 @@
 const assert = require('assert')
 const chalk = require('chalk')
-const debug = require('debug')('debug:start')
+const debug = require('debug')('webapp:start')
 const _ = require('lodash')
 const webpack = require('webpack')
 const WebpackDevServer = require('webpack-dev-server')
@@ -33,7 +33,7 @@ module.exports = (webpackConfig, options = {}) => {
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
       // start devServer
-      server.listen(options.port || 3000, devServer.host || 'localhost', (err) => {
+      server.listen(options.port || 3000, devServer.host || 'localhost', err => {
         if (err) throw err
         console.log(chalk.cyan('Starting the development server...\n'))
 
