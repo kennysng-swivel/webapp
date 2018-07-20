@@ -14,6 +14,9 @@ module.exports = {
   // development or production
   mode: argv.mode || 'development',
 
+  // open the web browser on start
+  open: argv.open || false,
+
   // port used by webpack-dev-server
   port: argv.port || 3000,
 
@@ -21,16 +24,16 @@ module.exports = {
   root: process.cwd(),
 
   // beforeStart event
-  beforeStart: (webpackConfig, options) => {
-    if (argv.open) {
-      return checkBrowsers(options.defaultBrowsers)(options.root)
+  beforeStart: (webpackConfig, { defaultBrowsers, open, root }) => {
+    if (open) {
+      return checkBrowsers(defaultBrowsers)(root)
     }
   },
 
   // start event
-  onStart: () => {
-    if (argv.open) {
-      openBrowser(`http://localhost:${argv.port || 3000}`)
+  onStart: (webpackConfig, { open, port }) => {
+    if (open) {
+      openBrowser(`http://localhost:${port}`)
     }
   }
 }
