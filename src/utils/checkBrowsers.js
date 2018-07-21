@@ -32,8 +32,14 @@ module.exports = defaultBrowsers => function checkBrowsers (dir, retry = true) {
         }
         const pkg = JSON.parse(fs.readFileSync(filePath))
         pkg['browserslist'] = defaultBrowsers
-        fs.writeFileSync(filePath, JSON.stringify(pkg, null, 2) + os.EOL)
-
+        return new Promise((resolve, reject) => {
+          fs.writeFile(filePath, JSON.stringify(pkg, null, 2) + os.EOL, err => {
+            return err ? reject(err) : resolve()
+          })
+        })
+      })
+      .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
+      .then(() => {
         browserslist.clearCaches()
         console.log()
         console.log(chalk.green('Set target browsers:'))
