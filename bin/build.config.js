@@ -28,6 +28,9 @@ module.exports = {
   // open the web browser on start
   open: (argv.open !== undefined ? argv.open : argv.test) || false,
 
+  // project root
+  root: process.cwd(),
+
   // whether to test the output
   test: argv.test || false,
 
