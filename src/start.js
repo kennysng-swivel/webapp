@@ -26,12 +26,12 @@ module.exports = (webpackConfig, options = {}) => {
 
   if (webpackConfig.length === 1) webpackConfig = webpackConfig[0]
 
-  // create devServer
-  const server = new WebpackDevServer(webpack(webpackConfig), devServer)
-
   // beforeStart event
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
+      // create devServer
+      const server = new WebpackDevServer(webpack(webpackConfig), devServer)
+
       // start devServer
       server.listen(options.port || 3000, devServer.host || 'localhost', err => {
         if (err) throw err

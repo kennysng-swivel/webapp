@@ -50,7 +50,6 @@ module.exports = defaultBrowsers => function checkBrowsers (dir, retry = true) {
         )
         console.log()
       })
-      .then(() => new Promise(resolve => setTimeout(() => resolve(), 3000)))
       // Swallow any error
       .catch(() => {})
       .then(() => checkBrowsers(dir, false))
