@@ -29,6 +29,8 @@ module.exports = (webpackConfig, options = {}) => {
   // beforeStart event
   Promise.resolve(typeof options.beforeBuild === 'function' && options.beforeBuild(webpackConfig, options))
     .then(() => {
+      let count = webpackConfig.length || 1
+
       // build with webpack
       const compiler = webpack(webpackConfig, (err, stats) => {
         // runtime error
@@ -37,12 +39,16 @@ module.exports = (webpackConfig, options = {}) => {
         // show logs
         console[stats.hasErrors() ? 'error' : 'log'](stats.toString({ colors: true }))
 
-        // built event
-        typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
+        count -= 1
 
-        timestamp = process.hrtime(timestamp)
-        timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
-        console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
+        // built event
+        if (!count) {
+          typeof options.onBuilt === 'function' && options.onBuilt(webpackConfig, options)
+
+          timestamp = process.hrtime(timestamp)
+          timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
+          console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
+        }
       })
 
       // clean build folder
