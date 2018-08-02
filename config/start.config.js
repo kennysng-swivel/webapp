@@ -24,16 +24,17 @@ module.exports = {
   root: process.cwd(),
 
   // beforeStart event
-  beforeStart: (webpackConfig, { defaultBrowsers, open, root }) => {
-    if (open) {
+  beforeStart: (webpackConfig, options) => {
+    if (options.open) {
+      const { defaultBrowsers, root } = options
       return checkBrowsers(defaultBrowsers)(root)
     }
   },
 
   // start event
-  onStart: (webpackConfig, { open, port }) => {
-    if (open) {
-      openBrowser(`http://localhost:${port}`)
+  onStart: (webpackConfig, options) => {
+    if (options.open) {
+      openBrowser(`http://localhost:${options.port}`)
     }
   }
 }

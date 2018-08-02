@@ -35,15 +35,18 @@ module.exports = {
   test: argv.test || false,
 
   // beforeBuild event
-  beforeBuild: (webpackConfig, { defaultBrowsers, open, root }) => {
-    if (open) {
+  beforeBuild: (webpackConfig, options) => {
+    if (options.open) {
+      const { defaultBrowsers, root } = options
       return checkBrowsers(defaultBrowsers)(root)
     }
   },
 
   // built event
-  onBuilt: ({ output: { path } }, { open, port, test }) => {
-    if (test) {
+  onBuilt: (webpackConfig, options) => {
+    if (options.test) {
+      const { output: { path } } = webpackConfig
+      const { open, port } = options
       const app = express()
       app
         .use(fallback())
