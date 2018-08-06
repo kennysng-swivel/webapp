@@ -11,6 +11,9 @@ module.exports = {
     production: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 11']
   },
 
+  // enable hot reload
+  hot: argv.hot || false,
+
   // development or production
   mode: argv.mode || 'development',
 

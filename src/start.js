@@ -20,7 +20,7 @@ module.exports = (webpackConfig, options = {}) => {
   debug(`INFO build mode = ${mode}`)
 
   // devServer options
-  const devServer = webpackConfig.reduce((result, config) => {
+  const devServerOptions = webpackConfig.reduce((result, config) => {
     return _.merge(result, config.devServer || {})
   }, {})
 
@@ -29,11 +29,25 @@ module.exports = (webpackConfig, options = {}) => {
   // beforeStart event
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
+      // add entry point for hot reload
+      if (options.hot) {
+        WebpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions)
+      }
+
+      // webpack compiler
+      const compiler = webpack(webpackConfig)
+
+      // enable hot reload
+      if (options.hot) {
+        devServerOptions.hot = true
+        new webpack.HotModuleReplacementPlugin().apply(compiler)
+      }
+
       // create devServer
-      const server = new WebpackDevServer(webpack(webpackConfig), devServer)
+      const server = new WebpackDevServer(compiler, devServerOptions)
 
       // start devServer
-      server.listen(options.port || 3000, devServer.host || 'localhost', err => {
+      server.listen(options.port || 3000, devServerOptions.host || 'localhost', err => {
         if (err) throw err
         console.log(chalk.cyan('Starting the development server...\n'))
         console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
