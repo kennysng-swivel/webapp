@@ -29,6 +29,14 @@ module.exports = (webpackConfig, options = {}) => {
   // beforeStart event
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
+      if (options.hot) {
+        if (options.hot.only) {
+          devServerOptions.hotOnly = true
+        } else {
+          devServerOptions.hot = true
+        }
+      }
+
       // add entry point for dev-server reload
       WebpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions)
 
@@ -37,7 +45,6 @@ module.exports = (webpackConfig, options = {}) => {
 
       // enable hot reload
       if (options.hot) {
-        devServerOptions.hot = true
         new webpack.HotModuleReplacementPlugin().apply(compiler)
         debug('INFO hot reload enabled')
       }

@@ -12,7 +12,9 @@ module.exports = {
   },
 
   // enable hot reload
-  hot: argv.hot || false,
+  hot: argv.hotOnly
+    ? { only: true }
+    : argv.hot || false,
 
   // development or production
   mode: argv.mode || 'development',
