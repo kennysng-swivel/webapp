@@ -41,6 +41,7 @@ module.exports = (webpackConfig, options = {}) => {
       if (options.hot) {
         devServerOptions.hot = true
         new webpack.HotModuleReplacementPlugin().apply(compiler)
+        debug('INFO hot reload enabled')
       }
 
       // create devServer
