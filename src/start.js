@@ -29,10 +29,8 @@ module.exports = (webpackConfig, options = {}) => {
   // beforeStart event
   Promise.resolve(typeof options.beforeStart === 'function' && options.beforeStart(webpackConfig, options))
     .then(() => {
-      // add entry point for hot reload
-      if (options.hot) {
-        WebpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions)
-      }
+      // add entry point for dev-server reload
+      WebpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions)
 
       // webpack compiler
       const compiler = webpack(webpackConfig)
