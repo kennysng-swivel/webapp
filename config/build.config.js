@@ -25,9 +25,6 @@ module.exports = {
   // port for testing server
   port: argv.port || 3000,
 
-  // open the web browser on start
-  open: (argv.open !== undefined ? argv.open : argv.test) || false,
-
   // project root
   root: process.cwd(),
 
@@ -36,7 +33,7 @@ module.exports = {
 
   // beforeBuild event
   beforeBuild: (webpackConfig, options) => {
-    if (options.open) {
+    if (options.test) {
       const { defaultBrowsers, root } = options
       return checkBrowsers(defaultBrowsers)(root)
     }
@@ -46,15 +43,13 @@ module.exports = {
   onBuilt: (webpackConfig, options) => {
     if (options.test) {
       const { output: { path } } = webpackConfig
-      const { open, port } = options
+      const { port } = options
       const app = express()
       app
         .use(fallback())
         .use(express.static(path))
         .listen(port, '0.0.0.0', () => {
-          if (open) {
-            openBrowser(`http://localhost:${port}`)
-          }
+          openBrowser(`http://localhost:${port}`)
         })
     }
   }
