@@ -56,7 +56,6 @@ module.exports = (webpackConfig, options = {}) => {
       server.listen(options.port || 3000, devServerOptions.host || 'localhost', err => {
         if (err) throw err
         console.log(chalk.cyan('Starting the development server...\n'))
-        console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
         // start event
         typeof options.onStart === 'function' && options.onStart(webpackConfig, options)

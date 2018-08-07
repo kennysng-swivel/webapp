@@ -30,6 +30,8 @@ switch (argv._[0]) {
       }
     })
 
+    console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
+
     // stop on signal
     const signals = ['SIGINT', 'SIGTERM']
     signals.forEach(sig => {
