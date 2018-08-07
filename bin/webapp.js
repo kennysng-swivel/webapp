@@ -2,43 +2,40 @@
 
 const assert = require('assert')
 const chalk = require('chalk')
-const childProcess = require('child_process')
-const path = require('path')
+const openBrowser = require('react-dev-utils/openBrowser')
 
-const { argv, env } = require('..').utils
+const WebApp = require('..')
+const { argv, checkBrowsers, env } = WebApp.utils
 
 if (argv.env) env(argv.env)
 
+assert(argv._[1], `please specify a webpack config file`)
+const webpackConfig = require(argv._[1])
+
+let webApp
 switch (argv._[0]) {
   case 'build':
-    assert(argv._[1], `please specify a webpack config file`)
     process.env.NODE_ENV = 'production'
-    childProcess.fork(path.resolve(__dirname, 'build'), process.argv.slice(3))
+    webApp = new WebApp(argv)
+    webApp.build(webpackConfig)
     break
   case 'start':
-    assert(argv._[1], `please specify a webpack config file`)
-    const main = () => childProcess.fork(path.resolve(__dirname, 'start'), process.argv.slice(3))
-
     process.env.NODE_ENV = 'development'
-    let proc = main()
+    webApp = new WebApp(argv)
+    webApp.start(webpackConfig)
 
-    // refresh event
-    process.openStdin().addListener('data', msg => {
-      if (String(msg).trim() === 'rs') {
-        proc.kill('SIGINT')
-        proc = main()
+    webApp.once('post-start', function () {
+      console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
+
+      if (argv.open) {
+        checkBrowsers(process.cwd())
+          .then(() => openBrowser(`http://${webApp.options.devServer.host}:${webApp.options.port}`))
       }
     })
-
-    console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
-
-    // stop on signal
-    const signals = ['SIGINT', 'SIGTERM']
-    signals.forEach(sig => {
-      process.on(sig, () => {
-        proc.kill(sig)
-        process.exit()
-      })
+    process.openStdin().addListener('data', msg => {
+      if (String(msg).trim() === 'rs') {
+        webApp.restart()
+      }
     })
     break
   case undefined:

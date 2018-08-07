@@ -4,7 +4,14 @@ const fs = require('fs')
 const os = require('os')
 const pkgUp = require('pkg-up')
 
-module.exports = defaultBrowsers => function checkBrowsers (dir, retry = true) {
+const defaultBrowsers = {
+  development: ['chrome', 'firefox', 'edge'].map(
+    browser => `last 2 ${browser} versions`
+  ),
+  production: ['>1%', 'last 4 versions', 'Firefox ESR', 'not ie < 11']
+}
+
+module.exports = function checkBrowsers (dir, retry = true) {
   const current = browserslist.findConfig(dir)
   if (current != null) {
     return Promise.resolve(current)
