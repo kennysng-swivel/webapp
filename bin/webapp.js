@@ -41,10 +41,10 @@ switch (argv._[0]) {
     break
   case undefined:
     console.error(chalk.red(`please specify a command`))
-    console.log(chalk.green(`usage: webapp {build|start} {webpack.config.js} [--config=webapp.config.js] [options]`))
+    console.log(chalk.green(`usage: webapp {build|start} /path/to/webpack.config.js [options]`))
     break
   default:
     console.error(chalk.red(`unknown command '${argv._[0]}'`))
-    console.log(chalk.green(`usage: webapp {build|start} {webpack.config.js} [--config=webapp.config.js] [options]`))
+    console.log(chalk.green(`usage: webapp {build|start} /path/to/webpack.config.js [options]`))
     break
 }
