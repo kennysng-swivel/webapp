@@ -8,8 +8,6 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const WebpackDevServer = require('webpack-dev-server')
 
-const freshRequire = require('./utils/freshRequire')
-
 function WebApp (options) {
   this.options = {
     analyze: options.analyze,
@@ -39,7 +37,7 @@ WebApp.prototype.fix = function (webpackConfig) {
 
 WebApp.prototype.build = function (webpackConfigPath) {
   this.webpackConfigPath = webpackConfigPath
-  const webpackConfig = this.fix(freshRequire(webpackConfigPath))
+  const webpackConfig = this.fix(require(webpackConfigPath))
   let timestamp = process.hrtime()
   this.emit('pre-build')
   console.log(chalk.bgGreen.black('Start building ...'))
@@ -79,10 +77,13 @@ WebApp.prototype.build = function (webpackConfigPath) {
   })
 }
 
-WebApp.prototype.start = function (webpackConfigPath) {
+WebApp.prototype.start = function (webpackConfigPath, restart) {
   this.webpackConfigPath = webpackConfigPath
-  const webpackConfig = this.fix(freshRequire(webpackConfigPath))
-  WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
+  let webpackConfig = require(webpackConfigPath)
+  if (restart) {
+    webpackConfig = this.fix(webpackConfig)
+    WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
+  }
   const compiler = this.webpackCompiler = webpack(webpackConfig)
   if (this.options.devServer.hot || this.options.devServer.hotOnly) {
     new webpack.HotModuleReplacementPlugin().apply(compiler)
@@ -104,7 +105,7 @@ WebApp.prototype.restart = function () {
   this.once('post-start', function () {
     this.emit('post-restart')
   })
-  this.start(webpackConfigPath)
+  this.start(webpackConfigPath, true)
 }
 
 WebApp.prototype.stop = function () {
