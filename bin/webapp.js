@@ -12,19 +12,19 @@ if (argv.env) env(argv.env)
 const __root = process.cwd()
 
 assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
-const webpackConfig = require(path.resolve(__root, argv._[1]))
+const webpackConfigPath = path.resolve(__root, argv._[1])
 
 let webApp
 switch (argv._[0]) {
   case 'build':
     process.env.NODE_ENV = 'production'
     webApp = new WebApp(argv)
-    webApp.build(webpackConfig)
+    webApp.build(webpackConfigPath)
     break
   case 'start':
     process.env.NODE_ENV = 'development'
     webApp = new WebApp(argv)
-    webApp.start(webpackConfig)
+    webApp.start(webpackConfigPath)
 
     webApp.once('post-start', function () {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))

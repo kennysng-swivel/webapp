@@ -35,8 +35,9 @@ WebApp.prototype.fix = function (webpackConfig) {
   return webpackConfig
 }
 
-WebApp.prototype.build = function (webpackConfig) {
-  webpackConfig = this.webpackConfig = this.fix(webpackConfig)
+WebApp.prototype.build = function (webpackConfigPath) {
+  this.webpackConfigPath = webpackConfigPath
+  const webpackConfig = this.fix(require(webpackConfigPath))
   let timestamp = process.hrtime()
   this.emit('pre-build')
   console.log(chalk.bgGreen.black('Start building ...'))
@@ -76,8 +77,9 @@ WebApp.prototype.build = function (webpackConfig) {
   })
 }
 
-WebApp.prototype.start = function (webpackConfig) {
-  webpackConfig = this.webpackConfig = this.fix(webpackConfig)
+WebApp.prototype.start = function (webpackConfigPath) {
+  this.webpackConfigPath = webpackConfigPath
+  const webpackConfig = this.fix(require(webpackConfigPath))
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
   const compiler = this.webpackCompiler = webpack(webpackConfig)
   if (this.options.devServer.hot || this.options.devServer.hotOnly) {
@@ -94,13 +96,13 @@ WebApp.prototype.start = function (webpackConfig) {
 }
 
 WebApp.prototype.restart = function () {
-  const webpackConfig = this.webpackConfig
+  const webpackConfigPath = this.webpackConfigPath
   this.emit('pre-restart')
   this.stop()
   this.once('post-start', function () {
     this.emit('post-restart')
   })
-  this.start(webpackConfig)
+  this.start(webpackConfigPath)
 }
 
 WebApp.prototype.stop = function () {
@@ -109,7 +111,7 @@ WebApp.prototype.stop = function () {
     this.webpackDevServer.close()
     delete this.webpackDevServer
     delete this.webpackCompiler
-    delete this.webpackConfig
+    delete this.webpackConfigPath
     this.emit('post-stop')
   }
 }
