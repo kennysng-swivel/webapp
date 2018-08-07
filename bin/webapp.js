@@ -2,15 +2,17 @@
 
 const assert = require('assert')
 const chalk = require('chalk')
+const path = require('path')
 const openBrowser = require('react-dev-utils/openBrowser')
 
 const WebApp = require('..')
 const { argv, checkBrowsers, env } = WebApp.utils
 
 if (argv.env) env(argv.env)
+const __root = process.cwd()
 
-assert(argv._[1], `please specify a webpack config file`)
-const webpackConfig = require(argv._[1])
+assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
+const webpackConfig = require(path.resolve(__root, argv._[1]))
 
 let webApp
 switch (argv._[0]) {
@@ -28,7 +30,7 @@ switch (argv._[0]) {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
       if (argv.open) {
-        checkBrowsers(process.cwd())
+        checkBrowsers(__root)
           .then(() => openBrowser(`http://${webApp.options.devServer.host}:${webApp.options.port}`))
       }
     })
