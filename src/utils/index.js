@@ -1,5 +1,6 @@
 module.exports = {
   argv: require('./argv'),
   checkBrowsers: require('./checkBrowsers'),
-  env: require('./env')
+  env: require('./env'),
+  freshRequire: require('./freshRequire')
 }
