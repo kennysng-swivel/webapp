@@ -23,7 +23,7 @@ Provide commands for developing web app with webpack
 | --------- | --------------------------------------------------------- | ------------ |
 | analyze   | whether to enable bundle analyzer, or the port to be used | false        |
 | clean     | whether to do a clean build                               | false        |
-| config    | webapp configurations                                     | undefined     |
+| config    | webapp configurations                                     | undefined    |
 | mode      | either `development` or `production`                      | `production` |
 | port      | port used by dev server                                   | 3000         |
 | test      | whether to test the built app                             | false        |
