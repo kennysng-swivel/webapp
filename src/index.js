@@ -74,7 +74,7 @@ WebApp.prototype.build = function (webpackConfigPath) {
     console[stats.hasErrors() ? 'error' : 'log'](stats.toString({ colors: true }))
     count -= 1
     if (!count) {
-      this.on('post-build')
+      this.emit('post-build')
       timestamp = process.hrtime(timestamp)
       timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
       console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))

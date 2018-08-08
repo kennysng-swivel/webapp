@@ -29,3 +29,16 @@ Provide commands for developing web app with webpack
 | mode      | either `development` or `production`                      | `production` |
 | open      | whether to test the built app                             | false        |
 | port      | port used by dev server                                   | 3000         |
+
+## events
+
+| Name         | Descriptions                                                                          |
+| ------------ | ------------------------------------------------------------------------------------- |
+| pre-build    | before the build process starts                                                       |
+| post-build   | after the build process completes                                                     |
+| pre-start    | before the development server starts                                                  |
+| post-start   | after the development server starts. Note that the build process may not be completed |
+| pre-restart  | before the development server restarts, i.e. before the stop event                    |
+| post-restart | after the development server restarts, i.e. after the start event                     |
+| pre-stop     | before the development server stops                                                   |
+| post-stop    | after the development server stops                                                    |
