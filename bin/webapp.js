@@ -42,12 +42,13 @@ switch (argv._[0]) {
       if (argv.open) {
         const host = webApp.options.devServer.host || 'localhost'
         const port = webApp.options.port
+        const buildPath = path.resolve(__root, argv.open)
         checkBrowsers(__root)
           .then(() => {
             const app = express()
             app
               .use(fallback())
-              .use(express.static(path))
+              .use(express.static(buildPath))
               .listen(port, host, () => {
                 openBrowser(`http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)
               })

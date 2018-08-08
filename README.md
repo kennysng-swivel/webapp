@@ -28,7 +28,7 @@ Provide commands for developing web app with webpack
 | env       | js file defining environment variables                    | undefined    |
 | events    | js file defining events                                   | undefined    |
 | mode      | either `development` or `production`                      | `production` |
-| open      | whether to test the built app                             | false        |
+| open      | build folder for testing the built app                    | undefined    |
 | port      | port used by dev server                                   | 3000         |
 
 ## events
