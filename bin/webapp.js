@@ -8,11 +8,15 @@ const openBrowser = require('react-dev-utils/openBrowser')
 const WebApp = require('..')
 const { argv, checkBrowsers, env } = WebApp.utils
 
-if (argv.env) env(argv.env)
 const __root = process.cwd()
 
 assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
 const webpackConfigPath = path.resolve(__root, argv._[1])
+
+if (argv.env) {
+  argv.env = path.resolve(__root, argv.env)
+  env(argv.env)
+}
 
 let events
 if (argv.events) {
