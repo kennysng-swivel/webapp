@@ -41,7 +41,7 @@ switch (argv._[0]) {
     webApp = new WebApp(argv, events)
     webApp.start(noncacheRequire(webpackConfigPath))
 
-    webApp.once('post-start', function () {
+    webApp.on('post-start', function () {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
       if (argv.open) {
