@@ -38,6 +38,10 @@ switch (argv._[0]) {
     break
   case 'start':
     process.env.NODE_ENV = 'development'
+    if (argv.devServer) {
+      argv.devServer = path.resolve(__root, argv.devServer)
+      argv.devServer = require(argv.devServer)
+    }
     webApp = new WebApp(argv, events)
     webApp.start(noncacheRequire(webpackConfigPath))
 

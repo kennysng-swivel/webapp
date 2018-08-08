@@ -8,6 +8,7 @@ Provide commands for developing web app with webpack
 
 | Options   | Descriptions                           | Default       |
 | --------- | -------------------------------------- | ------------- |
+| devServer | js file defining devServer options     | undefined     |
 | env       | js file defining environment variables | undefined     |
 | events    | js file defining events                | undefined     |
 | hot       | enable hot module replacement (HMR)    | false         |
