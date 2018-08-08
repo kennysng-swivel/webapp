@@ -13,6 +13,11 @@ const __root = process.cwd()
 assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
 const webpackConfigPath = path.resolve(__root, argv._[1])
 
+function noncacheRequire (id) {
+  delete require.cache[require.resolve(id)]
+  return require(id)
+}
+
 if (argv.env) {
   argv.env = path.resolve(__root, argv.env)
   env(argv.env)
@@ -29,12 +34,12 @@ switch (argv._[0]) {
   case 'build':
     process.env.NODE_ENV = 'production'
     webApp = new WebApp(argv, events)
-    webApp.build(webpackConfigPath)
+    webApp.build(noncacheRequire(webpackConfigPath))
     break
   case 'start':
     process.env.NODE_ENV = 'development'
     webApp = new WebApp(argv, events)
-    webApp.start(webpackConfigPath)
+    webApp.start(noncacheRequire(webpackConfigPath))
 
     webApp.once('post-start', function () {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
@@ -46,7 +51,12 @@ switch (argv._[0]) {
     })
     process.openStdin().addListener('data', msg => {
       if (String(msg).trim() === 'rs') {
-        webApp.restart()
+        webApp.emit('pre-restart')
+        webApp.stop()
+        webApp.once('post-start', function () {
+          webApp.emit('post-restart')
+        })
+        webApp.start(noncacheRequire(webpackConfigPath))
       }
     })
     break

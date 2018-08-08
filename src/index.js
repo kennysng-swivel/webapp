@@ -8,7 +8,7 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const WebpackDevServer = require('webpack-dev-server')
 
-function WebApp (options, events = {}) {
+function WebApp (options = {}, events = {}) {
   this.options = {
     analyze: options.analyze,
     clean: options.clean,
@@ -19,7 +19,8 @@ function WebApp (options, events = {}) {
       hotOnly: options.hotOnly
     },
     mode: options.mode || process.env.NODE_ENV || 'development',
-    port: options.port || 3000
+    port: options.port || 3000,
+    quiet: options.quiet
   }
   for (const eventName of Object.keys(events)) {
     this.on(eventName, events[eventName])
@@ -38,14 +39,11 @@ WebApp.prototype.fix = function (webpackConfig) {
   return webpackConfig
 }
 
-WebApp.prototype.build = function (webpackConfigPath) {
-  this.webpackConfigPath = webpackConfigPath
-  let webpackConfig = require(webpackConfigPath)
-  delete require.cache[require.resolve(webpackConfigPath)]
+WebApp.prototype.build = function (webpackConfig, noRun) {
   webpackConfig = this.fix(webpackConfig)
   let timestamp = process.hrtime()
   this.emit('pre-build')
-  console.log(chalk.bgGreen.black('Start building ...'))
+  if (!this.options.quiet) console.log(chalk.bgGreen.black('Start building ...'))
   let count = webpackConfig.length || 1
   const compiler = this.webpackCompiler = webpack(webpackConfig)
   if (this.options.clean) {
@@ -69,23 +67,23 @@ WebApp.prototype.build = function (webpackConfigPath) {
     new BundleAnalyzerPlugin({ analyzerPort: 0 }).apply(compiler)
     debug('INFO bundle analyzer enabled')
   }
-  compiler.run((err, stats) => {
-    if (err) throw err
-    console[stats.hasErrors() ? 'error' : 'log'](stats.toString({ colors: true }))
-    count -= 1
-    if (!count) {
-      this.emit('post-build')
-      timestamp = process.hrtime(timestamp)
-      timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
-      console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
-    }
-  })
+  if (!noRun) {
+    compiler.run((err, stats) => {
+      if (err) throw err
+      console[stats.hasErrors() ? 'error' : 'log'](stats.toString({ colors: true }))
+      count -= 1
+      if (!count) {
+        this.emit('post-build')
+        timestamp = process.hrtime(timestamp)
+        timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
+        if (!this.options.quiet) console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
+      }
+    })
+  }
+  return compiler
 }
 
-WebApp.prototype.start = function (webpackConfigPath) {
-  this.webpackConfigPath = webpackConfigPath
-  let webpackConfig = require(webpackConfigPath)
-  delete require.cache[require.resolve(webpackConfigPath)]
+WebApp.prototype.start = function (webpackConfig) {
   webpackConfig = this.fix(webpackConfig)
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
   const compiler = this.webpackCompiler = webpack(webpackConfig)
@@ -97,19 +95,10 @@ WebApp.prototype.start = function (webpackConfigPath) {
   const server = this.webpackDevServer = new WebpackDevServer(compiler, this.options.devServer)
   server.listen(this.options.port, this.options.devServer.host, err => {
     if (err) throw err
-    console.log(chalk.cyan('Starting the development server...\n'))
+    if (!this.options.quiet) console.log(chalk.cyan('Starting the development server...\n'))
     this.emit('post-start')
   })
-}
-
-WebApp.prototype.restart = function () {
-  const webpackConfigPath = this.webpackConfigPath
-  this.emit('pre-restart')
-  this.stop()
-  this.once('post-start', function () {
-    this.emit('post-restart')
-  })
-  this.start(webpackConfigPath)
+  return server
 }
 
 WebApp.prototype.stop = function () {
@@ -118,7 +107,6 @@ WebApp.prototype.stop = function () {
     this.webpackDevServer.close()
     delete this.webpackDevServer
     delete this.webpackCompiler
-    delete this.webpackConfigPath
     this.emit('post-stop')
   }
 }
