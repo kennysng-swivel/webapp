@@ -14,7 +14,6 @@ function WebApp (options = {}, events = {}) {
     clean: options.clean,
     devServer: {
       ...(options.devServer || {}),
-      host: options.host || 'localhost',
       hot: options.hot,
       hotOnly: options.hotOnly
     },
