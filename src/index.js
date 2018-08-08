@@ -8,7 +8,7 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const WebpackDevServer = require('webpack-dev-server')
 
-function WebApp (options, events) {
+function WebApp (options, events = {}) {
   this.options = {
     analyze: options.analyze,
     clean: options.clean,
