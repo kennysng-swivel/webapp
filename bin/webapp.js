@@ -2,43 +2,52 @@
 
 const assert = require('assert')
 const chalk = require('chalk')
-const childProcess = require('child_process')
 const path = require('path')
+const openBrowser = require('react-dev-utils/openBrowser')
 
-const { argv, env } = require('..').utils
+const WebApp = require('..')
+const { argv, checkBrowsers, env } = WebApp.utils
 
-if (argv.env) env(argv.env)
+const __root = process.cwd()
 
+assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
+const webpackConfigPath = path.resolve(__root, argv._[1])
+
+if (argv.env) {
+  argv.env = path.resolve(__root, argv.env)
+  env(argv.env)
+}
+
+let events
+if (argv.events) {
+  const eventsPath = path.resolve(__root, argv.events)
+  events = require(eventsPath)
+}
+
+let webApp
 switch (argv._[0]) {
   case 'build':
-    assert(argv._[1], `please specify a webpack config file`)
     process.env.NODE_ENV = 'production'
-    childProcess.fork(path.resolve(__dirname, 'build'), process.argv.slice(3))
+    webApp = new WebApp(argv, events)
+    webApp.build(webpackConfigPath)
     break
   case 'start':
-    assert(argv._[1], `please specify a webpack config file`)
-    const main = () => childProcess.fork(path.resolve(__dirname, 'start'), process.argv.slice(3))
-
     process.env.NODE_ENV = 'development'
-    let proc = main()
+    webApp = new WebApp(argv, events)
+    webApp.start(webpackConfigPath)
 
-    // refresh event
-    process.openStdin().addListener('data', msg => {
-      if (String(msg).trim() === 'rs') {
-        proc.kill('SIGINT')
-        proc = main()
+    webApp.once('post-start', function () {
+      console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
+
+      if (argv.open) {
+        checkBrowsers(__root)
+          .then(() => openBrowser(`http://${webApp.options.devServer.host}:${webApp.options.port}`))
       }
     })
-
-    console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
-
-    // stop on signal
-    const signals = ['SIGINT', 'SIGTERM']
-    signals.forEach(sig => {
-      process.on(sig, () => {
-        proc.kill(sig)
-        process.exit()
-      })
+    process.openStdin().addListener('data', msg => {
+      if (String(msg).trim() === 'rs') {
+        webApp.restart()
+      }
     })
     break
   case undefined:

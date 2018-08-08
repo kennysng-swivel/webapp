@@ -1,6 +1,6 @@
 {
   "name": "webapp",
-  "version": "1.0.14",
+  "version": "2.0.0",
   "main": "index.js",
   "bin": {
     "webapp": "./bin/webapp.js"
