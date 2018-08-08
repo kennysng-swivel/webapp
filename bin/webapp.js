@@ -2,6 +2,8 @@
 
 const assert = require('assert')
 const chalk = require('chalk')
+const fallback = require('connect-history-api-fallback')
+const express = require('express')
 const path = require('path')
 const openBrowser = require('react-dev-utils/openBrowser')
 
@@ -35,6 +37,23 @@ switch (argv._[0]) {
     process.env.NODE_ENV = 'production'
     webApp = new WebApp(argv, events)
     webApp.build(noncacheRequire(webpackConfigPath))
+
+    webApp.on('post-build', function () {
+      if (argv.open) {
+        const host = webApp.options.devServer.host || 'localhost'
+        const port = webApp.options.port
+        checkBrowsers(__root)
+          .then(() => {
+            const app = express()
+            app
+              .use(fallback())
+              .use(express.static(path))
+              .listen(port, host, () => {
+                openBrowser(`http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)
+              })
+          })
+      }
+    })
     break
   case 'start':
     process.env.NODE_ENV = 'development'
