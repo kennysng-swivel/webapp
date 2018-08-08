@@ -8,8 +8,6 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const WebpackDevServer = require('webpack-dev-server')
 
-const _require = require('./utils/require')
-
 function WebApp (options) {
   this.options = {
     analyze: options.analyze,
@@ -39,7 +37,9 @@ WebApp.prototype.fix = function (webpackConfig) {
 
 WebApp.prototype.build = function (webpackConfigPath) {
   this.webpackConfigPath = webpackConfigPath
-  const webpackConfig = this.fix(_require(webpackConfigPath))
+  let webpackConfig = require(webpackConfigPath)
+  delete require.cache[require.resolve(webpackConfigPath)]
+  webpackConfig = this.fix(webpackConfig)
   let timestamp = process.hrtime()
   this.emit('pre-build')
   console.log(chalk.bgGreen.black('Start building ...'))
@@ -81,7 +81,9 @@ WebApp.prototype.build = function (webpackConfigPath) {
 
 WebApp.prototype.start = function (webpackConfigPath) {
   this.webpackConfigPath = webpackConfigPath
-  const webpackConfig = this.fix(_require(webpackConfigPath))
+  let webpackConfig = require(webpackConfigPath)
+  delete require.cache[require.resolve(webpackConfigPath)]
+  webpackConfig = this.fix(webpackConfig)
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
   const compiler = this.webpackCompiler = webpack(webpackConfig)
   if (this.options.devServer.hot || this.options.devServer.hotOnly) {
