@@ -92,7 +92,7 @@ WebApp.prototype.start = function (webpackConfig) {
   }
   this.emit('pre-start')
   const server = this.webpackDevServer = new WebpackDevServer(compiler, this.options.devServer)
-  server.listen(this.options.port, this.options.devServer.host, err => {
+  server.listen(this.options.port, this.options.devServer.host || 'localhost', err => {
     if (err) throw err
     if (!this.options.quiet) console.log(chalk.cyan('Starting the development server...\n'))
     this.emit('post-start')

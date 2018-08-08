@@ -49,8 +49,10 @@ switch (argv._[0]) {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
       if (argv.open) {
+        let host = webApp.options.devServer.host || 'localhost'
+        if (host === '0.0.0.0') host = 'localhost'
         checkBrowsers(__root)
-          .then(() => openBrowser(`http://${webApp.options.devServer.host}:${webApp.options.port}`))
+          .then(() => openBrowser(`http://${host}:${webApp.options.port}`))
       }
     })
     process.openStdin().addListener('data', msg => {
