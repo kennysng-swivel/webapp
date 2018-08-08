@@ -8,7 +8,7 @@ const webpack = require('webpack')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const WebpackDevServer = require('webpack-dev-server')
 
-function WebApp (options) {
+function WebApp (options, events) {
   this.options = {
     analyze: options.analyze,
     clean: options.clean,
@@ -20,6 +20,9 @@ function WebApp (options) {
     },
     mode: options.mode || process.env.NODE_ENV || 'development',
     port: options.port || 3000
+  }
+  for (const eventName of Object.keys(events)) {
+    this.on(eventName, events[eventName])
   }
 }
 

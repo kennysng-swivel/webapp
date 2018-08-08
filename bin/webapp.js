@@ -18,12 +18,12 @@ let webApp
 switch (argv._[0]) {
   case 'build':
     process.env.NODE_ENV = 'production'
-    webApp = new WebApp(argv)
+    webApp = new WebApp(argv, require(argv.events))
     webApp.build(webpackConfigPath)
     break
   case 'start':
     process.env.NODE_ENV = 'development'
-    webApp = new WebApp(argv)
+    webApp = new WebApp(argv, require(argv.events))
     webApp.start(webpackConfigPath)
 
     webApp.once('post-start', function () {
