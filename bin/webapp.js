@@ -14,16 +14,22 @@ const __root = process.cwd()
 assert(typeof argv._[1] === 'string', `please specify a webpack config file`)
 const webpackConfigPath = path.resolve(__root, argv._[1])
 
+let events
+if (argv.events) {
+  const eventsPath = path.resolve(__root, argv.events)
+  events = require(eventsPath)
+}
+
 let webApp
 switch (argv._[0]) {
   case 'build':
     process.env.NODE_ENV = 'production'
-    webApp = new WebApp(argv, argv.events ? require(argv.events) : undefined)
+    webApp = new WebApp(argv, events)
     webApp.build(webpackConfigPath)
     break
   case 'start':
     process.env.NODE_ENV = 'development'
-    webApp = new WebApp(argv, argv.events ? require(argv.events) : undefined)
+    webApp = new WebApp(argv, events)
     webApp.start(webpackConfigPath)
 
     webApp.once('post-start', function () {
