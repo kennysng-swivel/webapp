@@ -50,7 +50,9 @@ switch (argv._[0]) {
               .use(fallback())
               .use(express.static(buildPath))
               .listen(port, host, () => {
-                openBrowser(`http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`)
+                const url = `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`
+                console.log(chalk.green(`You can visit the site at '${url}'\n`))
+                openBrowser(url)
               })
           })
       }
