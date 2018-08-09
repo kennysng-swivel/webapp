@@ -21,11 +21,14 @@ function WebApp (options = {}, events = {}) {
     port: options.port || 3000,
     quiet: options.quiet
   }
+
+  // register events
   for (const eventName of Object.keys(events)) {
     this.on(eventName, events[eventName])
   }
 }
 
+// fix webpackConfig object
 WebApp.prototype.fix = function (webpackConfig) {
   assert(webpackConfig, 'ERROR please provide a webpackConfig')
   assert(
@@ -38,13 +41,16 @@ WebApp.prototype.fix = function (webpackConfig) {
   return webpackConfig
 }
 
+// production build
 WebApp.prototype.build = function (webpackConfig, noRun) {
   webpackConfig = this.fix(webpackConfig)
   let timestamp = process.hrtime()
-  this.emit('pre-build')
   if (!this.options.quiet) console.log(chalk.bgGreen.black('Start building ...'))
+  this.emit('pre-build')
   let count = webpackConfig.length || 1
   const compiler = this.webpackCompiler = webpack(webpackConfig)
+
+  // clean build
   if (this.options.clean) {
     let paths = Array.isArray(webpackConfig)
       ? webpackConfig.map(config => config.output ? config.output.path : undefined)
@@ -62,10 +68,14 @@ WebApp.prototype.build = function (webpackConfig, noRun) {
       debug('WARN fail to enable clean build. no output path is declared')
     }
   }
+
+  // analyze bundle
   if (this.options.analyze) {
     new BundleAnalyzerPlugin({ analyzerPort: 0 }).apply(compiler)
     debug('INFO bundle analyzer enabled')
   }
+
+  // run webpack
   if (!noRun) {
     compiler.run((err, stats) => {
       if (err) throw err
@@ -82,15 +92,21 @@ WebApp.prototype.build = function (webpackConfig, noRun) {
   return compiler
 }
 
+// start development server
 WebApp.prototype.start = function (webpackConfig) {
   webpackConfig = this.fix(webpackConfig)
   WebpackDevServer.addDevServerEntrypoints(webpackConfig, this.options.devServer)
   const compiler = this.webpackCompiler = webpack(webpackConfig)
+
+  // enable hot update
   if (this.options.devServer.hot || this.options.devServer.hotOnly) {
     new webpack.HotModuleReplacementPlugin().apply(compiler)
     debug('INFO Hot Module Replacement (HMR) enabled')
   }
+
   this.emit('pre-start')
+
+  // start webpack-dev-server
   const server = this.webpackDevServer = new WebpackDevServer(compiler, this.options.devServer)
   server.listen(this.options.port, this.options.devServer.host || 'localhost', err => {
     if (err) throw err
@@ -100,6 +116,7 @@ WebApp.prototype.start = function (webpackConfig) {
   return server
 }
 
+// stop development server
 WebApp.prototype.stop = function () {
   if (this.webpackDevServer) {
     this.emit('pre-stop')
@@ -110,6 +127,7 @@ WebApp.prototype.stop = function () {
   }
 }
 
+// inherit EventEmitter
 util.inherits(WebApp, EventEmitter)
 
 module.exports = WebApp

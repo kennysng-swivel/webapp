@@ -38,6 +38,7 @@ switch (argv._[0]) {
     webApp = new WebApp(argv, events)
     webApp.build(noncacheRequire(webpackConfigPath))
 
+    // test the built app
     webApp.on('post-build', function () {
       if (argv.open) {
         const host = webApp.options.devServer.host || 'localhost'
@@ -67,6 +68,7 @@ switch (argv._[0]) {
     webApp = new WebApp(argv, events)
     webApp.start(noncacheRequire(webpackConfigPath))
 
+    // open the browser automatically on started
     webApp.on('post-start', function () {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
@@ -77,6 +79,8 @@ switch (argv._[0]) {
           .then(() => openBrowser(`http://${host}:${webApp.options.port}`))
       }
     })
+
+    // type 'rs' to restart the development server
     process.openStdin().addListener('data', msg => {
       if (String(msg).trim() === 'rs') {
         webApp.emit('pre-restart')
