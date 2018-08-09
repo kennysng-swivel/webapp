@@ -85,7 +85,7 @@ WebApp.prototype.build = function (webpackConfig, noRun) {
         this.emit('post-build')
         timestamp = process.hrtime(timestamp)
         timestamp = Math.round((timestamp[0] * 1000) + (timestamp[1] / 1000000))
-        if (!this.options.quiet) console.log(chalk.bgGreen.black(`Build complete: ${timestamp}s`))
+        if (!this.options.quiet) console.log(chalk.bgGreen.black(`Build complete: ${timestamp}ms`))
       }
     })
   }
