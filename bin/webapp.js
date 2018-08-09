@@ -42,7 +42,7 @@ switch (argv._[0]) {
     webApp.on('post-build', function () {
       if (argv.open) {
         const host = webApp.options.devServer.host || 'localhost'
-        const port = webApp.options.port
+        const port = webApp.options.devServer.port || 3000
         const buildPath = path.resolve(__root, argv.open)
         checkBrowsers(__root)
           .then(() => {
