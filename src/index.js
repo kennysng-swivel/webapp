@@ -14,7 +14,7 @@ function WebApp (options = {}, events = {}) {
     clean: options.clean,
     devServer: {
       ...(options.devServer || {}),
-      host: options.devServer.host || 'localhost',
+      host: (options.devServer || {}).host || 'localhost',
       hot: options.hot,
       hotOnly: options.hotOnly,
       port: options.port || 3000
