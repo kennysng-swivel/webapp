@@ -75,8 +75,9 @@ switch (argv._[0]) {
       if (argv.open) {
         let host = webApp.options.devServer.host || 'localhost'
         if (host === '0.0.0.0') host = 'localhost'
+        const port = webApp.options.devServer.port || 3000
         checkBrowsers(__root)
-          .then(() => openBrowser(`http://${host}:${webApp.options.port}`))
+          .then(() => openBrowser(`http://${host}:${port}`))
       }
     })
 
