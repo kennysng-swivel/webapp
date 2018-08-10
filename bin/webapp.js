@@ -41,8 +41,8 @@ switch (argv._[0]) {
     // test the built app
     webApp.on('post-build', function () {
       if (argv.open) {
-        const host = webApp.options.devServer.host || 'localhost'
-        const port = webApp.options.devServer.port || 3000
+        const host = webApp.options.devServer.host
+        const port = webApp.options.devServer.port
         const buildPath = path.resolve(__root, argv.open)
         checkBrowsers(__root)
           .then(() => {
@@ -73,9 +73,9 @@ switch (argv._[0]) {
       console.log(chalk.green('You can type \'rs\' to restart the development server\n'))
 
       if (argv.open) {
-        let host = webApp.options.devServer.host || 'localhost'
+        let host = webApp.options.devServer.host
         if (host === '0.0.0.0') host = 'localhost'
-        const port = webApp.options.devServer.port || 3000
+        const port = webApp.options.devServer.port
         checkBrowsers(__root)
           .then(() => openBrowser(`http://${host}:${port}`))
       }

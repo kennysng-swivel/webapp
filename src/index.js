@@ -14,9 +14,10 @@ function WebApp (options = {}, events = {}) {
     clean: options.clean,
     devServer: {
       ...(options.devServer || {}),
+      host: options.devServer.host || 'localhost',
       hot: options.hot,
       hotOnly: options.hotOnly,
-      port: options.port
+      port: options.port || 3000
     },
     mode: options.mode || process.env.NODE_ENV || 'development',
     quiet: options.quiet
@@ -108,7 +109,7 @@ WebApp.prototype.start = function (webpackConfig) {
 
   // start webpack-dev-server
   const server = this.webpackDevServer = new WebpackDevServer(compiler, this.options.devServer)
-  server.listen(this.options.devServer.port || 3000, this.options.devServer.host || 'localhost', err => {
+  server.listen(this.options.devServer.port, this.options.devServer.host, err => {
     if (err) throw err
     if (!this.options.quiet) console.log(chalk.cyan('Starting the development server...\n'))
     this.emit('post-start')
