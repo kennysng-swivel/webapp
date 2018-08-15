@@ -4,6 +4,7 @@ const assert = require('assert')
 const chalk = require('chalk')
 const fallback = require('connect-history-api-fallback')
 const express = require('express')
+const fs = require('fs')
 const path = require('path')
 const openBrowser = require('react-dev-utils/openBrowser')
 
@@ -31,6 +32,18 @@ if (argv.events) {
   events = require(eventsPath)
 }
 
+function startServer (host, port, path) {
+  const app = express()
+  app
+    .use(fallback())
+    .use(express.static(path))
+    .listen(port, host, () => {
+      const url = `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`
+      console.log(chalk.green(`You can visit the site at '${url}'\n`))
+      openBrowser(url)
+    })
+}
+
 let webApp
 switch (argv._[0]) {
   case 'build':
@@ -45,18 +58,16 @@ switch (argv._[0]) {
         const port = webApp.options.devServer.port
         const buildPath = path.resolve(__root, argv.open)
         checkBrowsers(__root)
-          .then(() => {
-            const app = express()
-            app
-              .use(fallback())
-              .use(express.static(buildPath))
-              .listen(port, host, () => {
-                const url = `http://${host === '0.0.0.0' ? 'localhost' : host}:${port}`
-                console.log(chalk.green(`You can visit the site at '${url}'\n`))
-                openBrowser(url)
-              })
-          })
+          .then(() => startServer(host, port, buildPath))
       }
+    })
+    break
+  case 'test':
+    assert(typeof argv._[1] === 'string', 'please specify a build path')
+    fs.stat(argv._[1], (err, stat) => {
+      if (err) throw err
+      assert(stat.isDirectory(), 'please specify a valid build path')
+      startServer(argv.host || 'localhost', argv.port || 3000, argv._[1])
     })
     break
   case 'start':

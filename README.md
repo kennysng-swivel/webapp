@@ -31,6 +31,15 @@ Provide commands for developing web app with webpack
 | open      | build folder for testing the built app                    | undefined    |
 | port      | port used by dev server                                   | 3000         |
 
+## test
+
+`webapp test /path/to/build/folder [options]`
+
+| Options | Descriptions             | Default   |
+| --------| -------------------------| --------- |
+| host    | host used by test server | localhost |
+| port    | port used by test server | 3000      |
+
 ## events
 
 | Name         | Descriptions                                                                          |
