@@ -1044,6 +1044,13 @@ define-property@^2.0.2:
     is-descriptor "^1.0.2"
     isobject "^3.0.1"
 
+del-webpack-plugin@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/del-webpack-plugin/-/del-webpack-plugin-1.0.6.tgz#05277e6282a8c0c4cf3866ea95f727d0a61229f6"
+  dependencies:
+    chalk "^2.4.1"
+    del "^3.0.0"
+
 del@^2.0.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/del/-/del-2.2.2.tgz#c12c981d067846c84bcaf862cff930d907ffd1a8"

@@ -1,6 +1,6 @@
 const assert = require('assert')
 const chalk = require('chalk')
-const CleanPlugin = require('clean-webpack-plugin')
+const DelPlugin = require('del-webpack-plugin')
 const debug = require('debug')('webapp')
 const { EventEmitter } = require('events')
 const util = require('util')
@@ -53,21 +53,8 @@ WebApp.prototype.build = function (webpackConfig, noRun) {
 
   // clean build
   if (this.options.clean) {
-    let paths = Array.isArray(webpackConfig)
-      ? webpackConfig.map(config => config.output ? config.output.path : undefined)
-      : [webpackConfig.output ? webpackConfig.output.path : undefined]
-    paths = paths.reduce((result, path) => {
-      if (path && !result.find(p => p === path)) {
-        result.push(path)
-      }
-      return result
-    }, [])
-    if (paths.length > 0) {
-      new CleanPlugin(paths, { root: process.cwd() }).apply(compiler)
-      debug('INFO clean build enabled')
-    } else {
-      debug('WARN fail to enable clean build. no output path is declared')
-    }
+    new DelPlugin({ info: true }).apply(compiler)
+    debug('INFO clean build enabled')
   }
 
   // analyze bundle
